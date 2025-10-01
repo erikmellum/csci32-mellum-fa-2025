@@ -24,13 +24,17 @@ export async function registerGraphQL(fastify: FastifyInstance) {
     resolvers,
   })
   const graphiql = getBooleanEnvVar('ENABLE_GRAPHIQL', false)
+  const isProduction = getRequiredStringEnvVar('NODE_ENV') === 'production'
   fastify.log.info(`GraphiQL is ${graphiql ? 'enabled' : 'disabled'}`)
+  fastify.log.info(`Introspection is ${isProduction ? 'disabled' : 'enabled'}`)
+
   const options = {
     schema,
     cache: false,
     path: GRAPHQL_API_PATH,
     graphiql,
     queryDepth: GRAPHQL_DEPTH_LIMIT,
+    introspection: !isProduction, // Disable introspection in production
     context: (request: FastifyRequest, reply: FastifyReply): Context => {
       return { request, reply, userService: fastify.userService, prisma: fastify.prisma }
     },
