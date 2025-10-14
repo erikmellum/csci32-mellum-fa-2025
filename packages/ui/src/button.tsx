@@ -11,9 +11,11 @@ interface ButtonProps {
   onClick?: () => void
   size?: Size
   variant?: Variant
+  type?: 'button' | 'submit' | 'reset'
 }
 
 export const Button = ({
+  type = 'button',
   children,
   className,
   href,
@@ -54,7 +56,7 @@ export const Button = ({
       {children}
     </a>
   ) : (
-    <button className={completedCssClasses} onClick={onClick}>
+    <button className={completedCssClasses} onClick={onClick} type={type}>
       {children}
     </button>
   )
