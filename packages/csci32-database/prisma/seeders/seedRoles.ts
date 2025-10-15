@@ -1,9 +1,8 @@
 import { PrismaClient, RoleName, PermissionName } from '@prisma/client'
+export const ADMIN_ROLE_ID = 'role-admin'
+export const BASIC_ROLE_ID = 'role-basic'
 
 export async function seedRoles(prisma: PrismaClient) {
-  const ADMIN_ROLE_ID = 'role-admin'
-  const BASIC_ROLE_ID = 'role-basic'
-
   const adminRole = await prisma.role.upsert({
     where: { role_id: ADMIN_ROLE_ID },
     update: {},

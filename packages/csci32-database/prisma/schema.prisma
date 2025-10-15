@@ -34,7 +34,7 @@ model Role {
   role_id     String           @id @default(cuid())
   name        RoleName     @unique
   users       User[]
-  permissions RolePermission[]
+  role_permissions RolePermission[]
 }
 
 model Permission {
