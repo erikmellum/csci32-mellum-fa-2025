@@ -3,7 +3,6 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useAuth } from '../hooks/useAuth'
 import { Button } from '@repo/ui/button'
-// @ts-expect-error - Input component export in package.json
 import { Input } from '@repo/ui/input'
 import { Size } from '@repo/ui/size'
 import { Variant } from '@repo/ui/variant'
@@ -27,10 +26,10 @@ export default function Auth() {
   const onSubmit = async (data: AuthFormInputs) => {
     if (isSignUpMode) {
       const result = await signUp(data)
-      console.log('Signed up:', result)
+      if (result) console.log('Signed up successfully:', result.user)
     } else {
       const result = await signIn({ email: data.email, password: data.password })
-      console.log('Signed in:', result)
+      if (result) console.log('Signed in successfully:', result.user)
     }
   }
 

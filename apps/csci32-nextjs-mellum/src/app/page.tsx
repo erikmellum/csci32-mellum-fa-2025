@@ -1,12 +1,20 @@
-import Link from 'next/link'
+'use client'
+
+import { useAuth } from '@/hooks/useAuth'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 export default function Home() {
-  return (
-    <Link
-      href="/button"
-      className="text-blue-500 hover:underline hover:text-blue-600 active:text-blue-700 transition-colors"
-    >
-      Check out the button lab
-    </Link>
-  )
+  const { user } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (user) {
+      router.push('/dashboard')
+    } else {
+      router.push('/welcome')
+    }
+  }, [user, router])
+
+  return <div>Loading...</div>
 }
