@@ -26,8 +26,8 @@ model User {
   email         String?  @unique
   emailVerified DateTime?
   passwordHash  String?
-  roleId        String?
-  role          Role?    @relation(fields: [roleId], references: [role_id])
+  role_id        String?
+  role          Role?    @relation(fields: [role_id], references: [role_id])
 }
 
 model Role {

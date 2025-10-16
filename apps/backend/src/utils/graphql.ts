@@ -9,6 +9,10 @@ import { getBooleanEnvVar, getRequiredStringEnvVar } from '@/utils'
 import type { UserService } from '@/services/UserService'
 import mercurius from 'mercurius'
 import mercuriusLogging from 'mercurius-logging'
+import type { RoleService } from '@/services/RoleService'
+import type { PermissionService } from '@/services/PermissionService'
+import { RoleResolver } from '@/resolvers/RoleResolver'
+import { PermissionResolver } from '@/resolvers/PermissionResolver'
 
 const GRAPHQL_API_PATH = '/api/graphql'
 const GRAPHQL_DEPTH_LIMIT = 7
@@ -24,12 +28,14 @@ registerEnumType(RoleName, {
   description: 'Enum representing valid roles for users',
 })
 
-const resolvers = [UserResolver] as NonEmptyArray<Function>
+const resolvers = [UserResolver, RoleResolver, PermissionResolver] as NonEmptyArray<Function>
 
 export interface Context {
   request: FastifyRequest
   reply: FastifyReply
   userService: UserService
+  roleService: RoleService
+  permissionService: PermissionService
   prisma: PrismaClient
   log: FastifyBaseLogger
 }
@@ -55,6 +61,8 @@ export async function registerGraphQL(fastify: FastifyInstance) {
       userService: fastify.userService,
       prisma: fastify.prisma,
       log: fastify.log,
+      roleService: fastify.roleService,
+      permissionService: fastify.permissionService,
     }),
     allowBatchedQueries: false,
   }

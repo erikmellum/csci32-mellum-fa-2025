@@ -1,10 +1,23 @@
 import 'reflect-metadata'
-import { Resolver, Query, Field, ObjectType, Ctx, ID, Arg, Mutation, Authorized } from 'type-graphql'
+import {
+  Resolver,
+  Query,
+  Field,
+  ObjectType,
+  Ctx,
+  ID,
+  Arg,
+  Mutation,
+  Authorized,
+  FieldResolver,
+  Root,
+} from 'type-graphql'
 import type { Context } from '@/utils/graphql'
 import { AuthPayload, SignUpInput } from './types/AuthTypes'
 import { SignInInput } from './types/SignInTypes'
 import { PermissionName } from 'csci32-database'
 import { FindManyUsersInput } from './types/FindManyUsersInput'
+import { Role } from './types/Role'
 
 @ObjectType()
 class User {
@@ -16,9 +29,12 @@ class User {
 
   @Field(() => String, { nullable: true })
   email?: string
+
+  // Internal field used by the resolver (not exposed to clients)
+  role_id?: string
 }
 
-@Resolver()
+@Resolver(() => User)
 export class UserResolver {
   @Authorized([PermissionName.UserRead])
   @Query(() => [User])
@@ -50,5 +66,16 @@ export class UserResolver {
     if (!input.email || !input.password) throw new Error('email and password are required')
     const { user, token } = await userService.authenticateUser(input)
     return { user, token }
+  }
+
+  @FieldResolver(() => Role, { nullable: true })
+  async role(@Root() user: User, @Ctx() ctx: Context) {
+    // 🔍 Check that the user has an associated role
+    if (!user.role_id) {
+      return null
+    }
+
+    // 🧭 Use the RoleService from context to fetch the related Role
+    return ctx.roleService.findById(user.role_id)
   }
 }
